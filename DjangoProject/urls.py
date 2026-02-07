@@ -17,13 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from main import views
-from main.views import page_elements, calculate
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', views.home),
-    path('home/elements/<int:index>/<str:name>', page_elements),
+    path('home/elements/<int:index>/<str:name>', views.page_elements),
     path('calc/', views.calc),
-    path('calc/<str:operation>/<int:a>/<int:b>', calculate),
+    path('calc/<str:operation>/<int:a>/<int:b>', views.calculate),
     path('', views.website),
+
+    path('register/', views.post_handler),
+    path('course/', views.courses),
+    path('course/<str:level>', views.course_by_level),
 ]

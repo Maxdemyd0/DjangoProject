@@ -56,7 +56,7 @@ p {
 }
 
 body{
-    background-color: #1c1c1c;
+    background-color: hotpink;
 }
 
 form {
@@ -76,6 +76,7 @@ form label {
 }
 
 form input[type="number"],
+form input[type="text"],
 form select {
     font-family: "Segoe UI Light", system-ui;
     font-weight: normal;
@@ -92,6 +93,7 @@ form select {
 }
 
 form input[type="number"]:focus,
+form input[type="text"]:focus,
 form select:focus {
     outline: none;
     border-color: #76fffb;
@@ -116,6 +118,7 @@ form button[type="submit"]:hover {
 }
 
 @media (min-width: 600px) {
+    form input[type="text"],
     form input[type="number"],
     form select {
         width: 300px;

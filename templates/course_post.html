@@ -1,0 +1,15 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Course</title>
+    <link rel="stylesheet" href="{% static 'main/styles.css' %}">
+    <link rel="icon" href="{% static 'main/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    <h2>{{ name }}</h2>
+    <h3>Level: {{ level }}</h3>
+    <h4>Time: {{ time }}</h4>
+</body>
+</html>

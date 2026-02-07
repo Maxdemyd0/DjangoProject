@@ -1,6 +1,8 @@
 from django.http import HttpRequest
 from django.shortcuts import render
 
+from main.course import Course, add_course
+
 
 # Create your views here.
 
@@ -57,3 +59,36 @@ def calculate(request: HttpRequest, operation: str, a: int, b: int):
 
 def website(request: HttpRequest):
     return render(request, "website.html")
+
+def post_handler(request: HttpRequest):
+    if request.method == "POST":
+        data = request.POST
+        name = data["name"]
+        age = data["age"]
+
+        str_data = f"Name: {name}, age: {age}"
+        context = {
+            "str_data":str_data
+        }
+        return render(request, "profile_view.html", context = context)
+    return render(request, "profile.html")
+
+def courses(request: HttpRequest):
+    if request.method == "POST":
+        data = request.POST
+        name = data["name"]
+        level = data["level"]
+        time = int(data["time"])
+        course = Course(name, level, time)
+        add_course(course)
+        context = {
+            "name": name,
+            "level": level,
+            "time": time,
+        }
+
+        return render(request, "course_post.html", context = context)
+    return render(request, "course.html")
+
+def course_by_level(request: HttpRequest, level: str):
+    course_list = []

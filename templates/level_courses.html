@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Course</title>
+    <link rel="stylesheet" href="{% static 'main/styles.css' %}">
+    <link rel="icon" href="{% static 'main/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    {% for course in courses %}
+        <h2>Name: {{ course.name }}</h2>
+        <h3>Level: {{ course.level }}</h3>
+        <h4>Time: {{ course.time }}</h4>
+    {% endfor %}
+</body>
+</html>
