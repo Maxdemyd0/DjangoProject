@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="{% static 'main/styles.css' %}">
+    <link rel="icon" href="{% static 'main/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    <h1>Calculator</h1>
+    <h3>URL examples: </h3>
+    <p>
+        /calc/add/10/5<br>
+        /calc/sub/20/7<br>
+        /calc/mul/4/6<br>
+        /calc/div/30/3
+    </p>
+    <form id="calcForm">
+        <label for="num1">Number 1:</label>
+        <input type="number" id="num1" name="num1" required />
+
+        <label for="num2">Number 2:</label>
+        <input type="number" id="num2" name="num2" required />
+
+        <label for="operation">Operation:</label>
+        <select id="operation" name="operation" required>
+            <option value="add">+</option>
+            <option value="sub">-</option>
+            <option value="mul">*</option>
+            <option value="div">/</option>
+        </select>
+
+        <button type="submit">Calculate</button>
+    </form>
+
+    <script src="{% static 'main/calculator.js' %}"></script>
+
+    <a href="/home/" class="link">Return to home page</a>
+</body>
+</html>
