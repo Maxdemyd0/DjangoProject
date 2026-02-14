@@ -27,6 +27,7 @@ urlpatterns = [
     path('', views.website),
 
     path('register/', views.post_handler),
-    path('course/', views.courses),
-    path('course/<str:level>', views.course_by_level),
+    path('addcourse/', views.courses),
+    path('courses/', views.all_courses),
+    path('courses/<str:level>', views.course_by_level),
 ]

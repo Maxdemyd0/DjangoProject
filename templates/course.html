@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1>Add New Course: </h1>
-    <form action="/register/" method="POST">
+    <form action="/addcourse/" method="POST">
         {% csrf_token %}
         <label for="name">Course Name: </label>
         <input id="name" type="text" name="name">

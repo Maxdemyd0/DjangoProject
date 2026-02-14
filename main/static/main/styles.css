@@ -103,7 +103,7 @@ form select:focus {
 form button[type="submit"] {
     font-family: "Segoe UI Light", system-ui;
     font-weight: bold;
-    font-size: 26px;
+    font-size: 24px;
     color: #1c1c1c;
     background-color: #76fffb;
     border: none;

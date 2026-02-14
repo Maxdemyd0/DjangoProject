@@ -1,7 +1,7 @@
 from django.http import HttpRequest
 from django.shortcuts import render
 
-from main.course import Course, add_course
+from main.course import Course, add_course, get_courses_by_level, get_all_courses
 
 
 # Create your views here.
@@ -44,6 +44,15 @@ def calculate(request: HttpRequest, operation: str, a: int, b: int):
         else:
             result = a / b
         operation_sign = "÷"
+    elif operation == "mod":
+        result = a % b
+        operation_sign = "%"
+    elif operation == "flo":
+        result = a // b
+        operation_sign = "//"
+    elif operation == "rai":
+        result = a ** b
+        operation_sign = "^"
     else:
         text = "ERROR: invalid operation. Please use 'add', 'sub', 'mul' or 'div'"
 
@@ -75,10 +84,10 @@ def post_handler(request: HttpRequest):
 
 def courses(request: HttpRequest):
     if request.method == "POST":
-        data = request.POST
-        name = data["name"]
-        level = data["level"]
-        time = int(data["time"])
+        request_data = request.POST
+        name = request_data["name"]
+        level = request_data["level"]
+        time = int(request_data["time"])
         course = Course(name, level, time)
         add_course(course)
         context = {
@@ -90,5 +99,16 @@ def courses(request: HttpRequest):
         return render(request, "course_post.html", context = context)
     return render(request, "course.html")
 
+def all_courses(request: HttpRequest):
+    course_list = get_all_courses()
+    context = {
+        "courses": course_list
+    }
+    return render(request, "courses_view.html", context = context)
+
 def course_by_level(request: HttpRequest, level: str):
-    course_list = []
+    course_list = get_courses_by_level(level)
+    context = {
+        "courses": course_list
+    }
+    return render(request, "courses_view.html", context=context)
