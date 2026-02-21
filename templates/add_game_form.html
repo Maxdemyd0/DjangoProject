@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Game</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-container {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            width: 95%;
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            outline: none;
+            background-color: #2a2a2a;
+            color: white;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border: 2px solid #4CAF50;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        button:hover {
+            background-color: #3a8b3f;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background-color: #2a2a2a;
+            padding: 12px;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        input,
+        textarea,
+        button {
+            font-family: Arial, sans-serif;
+        }
+
+        input[type="checkbox"] {
+            accent-color: red;
+        }
+
+        select {
+            background-color: #2a2a2a;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 35px;
+            }
+
+            input,
+            textarea {
+                font-size: 16px;
+            }
+
+            button {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Game Creation Form</h1>
+
+        <form method="POST" action="{% url 'add-game' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" required>
+
+            <label for="description">Description</label>
+            <textarea name="description" id="description" required></textarea>
+
+            <div class="category-list">
+                {% for category in categories %}
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="categories" value="{{ category.id }}">
+                        {{ category.name }}
+                    </label>
+                {% endfor %}
+            </div>
+            <label for="developer">Developer</label>
+            <select name="developer" id="developer">
+                {% for company in companies %}
+                    <option value="{{ company.id }}">{{ company.name }}</option>
+                {% endfor %}
+            </select>
+            <label for="publisher">Publisher</label>
+            <select name="publisher" id="publisher">
+                {% for company in companies %}
+                    <option value="{{ company.id }}">{{ company.name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="price">Price ($)</label>
+            <input type="number" step="0.01" name="price" id="price" required>
+
+            <label for="icon_url">Icon URL</label>
+            <input type="url" name="icon_url" id="icon_url" required>
+
+            <label for="gameplay_video">Gameplay Video (optional)</label>
+            <input type="file" name="gameplay_video" id="gameplay_video" accept="video/*">
+
+            <label for="user_name">Your Name</label>
+            <input type="text" name="user_name" id="user_name" required>
+
+            <button type="submit">Create Game</button>
+        </form>
+    </div>
+</body>
+</html>

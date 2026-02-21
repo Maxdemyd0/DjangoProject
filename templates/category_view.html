@@ -1,0 +1,168 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ category.name }}</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .category-description {
+            color: #bbbbbb;
+            margin-bottom: 30px;
+        }
+
+        .games-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            align-items: flex-start;
+            margin-top: 25px;
+        }
+
+        .game-card {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            width: 250px;
+            transition: transform 0.2s ease;
+            margin: 10px 5px;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .game-card img {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .game-title {
+            margin: 0 0 5px 0;
+        }
+
+        .game-description {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            color: #cccccc;
+        }
+
+        .price {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .view-btn {
+            display: inline-block;
+            padding: 10px 16px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 12px;
+            transition: background-color 0.2s ease;
+        }
+
+        .view-btn:hover {
+            background-color: #45a049;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 40px;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .game-card {
+                width: 350px;
+                margin-top: 15px;
+            }
+
+            .game-title {
+                font-size: 24px;
+            }
+
+            .price {
+                font-size: 22px;
+            }
+
+            .view-btn {
+                font-size: 18px;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ category.name }} Games</h1>
+
+    {% if category.description %}
+        <p class="category-description">
+            {{ category.description }}
+        </p>
+    {% endif %}
+
+    <div class="games-container">
+        {% for game in games %}
+            <div class="game-card">
+
+                <img src="{{ game.icon_url }}" alt="{{ game.title }} image">
+
+                <h3 class="game-title">{{ game.title }}</h3>
+
+                <p>{{ game.publisher }}</p>
+
+                <p class="game-description">
+                    {{ game.description }}
+                </p>
+
+                <p class="price">
+                    {% if game.price == 0 %}
+                        Free
+                    {% else %}
+                        ${{ game.price|floatformat:2 }}
+                    {% endif %}
+                </p>
+
+                <a href="{% url 'game' game.id %}" class="view-btn">
+                    View Game
+                </a>
+
+            </div>
+        {% empty %}
+            <p>No games found in this category.</p>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'games' %}" class="back-link">
+        ← Back to All Games
+    </a>
+</body>
+</html>

@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{ game.title }}</title>
+        <link rel="icon" href="{% static 'favicon.ico' %}">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #121212;
+                color: white;
+            }
+
+            a {
+                text-decoration: underline;
+                color: #d1fff7;
+            }
+
+            .return-link {
+                font-weight: bold;
+            }
+
+            img {
+                width: 100%;
+                aspect-ratio: 16 / 9;   /* Change this ratio if you want */
+                object-fit: cover;
+                border-radius: 8px;
+            }
+
+            .game-detail-image {
+                max-width: 500px;   /* maximum width */
+                width: 100%;
+                height: auto;
+                border-radius: 10px;
+            }
+
+            .price {
+                color: #4CAF50;
+                font-weight: bold;
+                font-size: 20px;
+            }
+
+            .game-description {
+                font-size: 18px;
+                line-height: 1.6;
+                word-break: normal;
+                overflow-wrap: break-word;
+                white-space: pre-line;
+            }
+
+            @media (max-width: 768px) {
+                a {
+                    text-decoration: underline;
+                    color: #d1fff7;
+                    font-size: 16px;
+                }
+
+                .price {
+                    color: #4CAF50;
+                    font-weight: bold;
+                    font-size: 18px;
+                }
+
+                .return-link {
+                    font-weight: bold;
+                }
+
+                img {
+                    width: 100%;
+                    aspect-ratio: 16 / 9;   /* Change this ratio if you want */
+                    object-fit: cover;
+                    border-radius: 8px;
+                }
+
+                .game-detail-image {
+                    max-width: 400px;   /* maximum width */
+                    width: 100%;
+                    height: auto;
+                    border-radius: 10px;
+                }
+
+                .price {
+                    font-size: 22px;
+                }
+
+                .game-description {
+                    font-size: 18px;
+                    line-height: 1.6;
+                    word-break: normal;
+                    overflow-wrap: break-word;
+                    white-space: pre-line;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+
+    <h1>{{ game.title }}</h1>
+
+    <p><strong>Developer:</strong> <a href="{% url 'company-view' game.developer.slug %}">{{ game.developer }}</a></p>
+    <p><strong>Publisher:</strong> <a href="{% url 'company-view' game.publisher.slug %}">{{ game.publisher }}</a></p>
+
+    <p>
+        <strong>Categories:</strong>
+        {% for category in game.categories.all %}
+            <a href="{% url 'category-view' category.id %}">{{ category.name }}</a>{% if not forloop.last %}, {% endif %}
+        {% empty %}
+            None
+        {% endfor %}
+    </p>
+
+    <p><strong>Website:</strong> {% if game.site_url %}<a href="{{ game.site_url }}">{{ game.site_url }}</a>{% else %}None{% endif %}</p>
+
+    {% if game.icon_url %}
+        <img src="{{ game.icon_url }}" class="game-detail-image" alt="{{ game.title }} ICON">
+    {% else %}
+        <img src="https://images.pexels.com/photos/434442/pexels-photo-434442.jpeg" class="game-detail-image" alt="{{ game.title }} ICON">
+    {% endif %}
+
+    {% if game.gameplay_video %}
+        Gameplay:
+        <video width="100%" controls>
+            <source src="{{ game.gameplay_video.url }}">
+            Your browser does not support the video tag.
+        </video>
+    {% endif %}
+
+    <p class="game-description">{{ game.description }}</p>
+    <p class="price">
+        Price:
+        {% if game.price == 0 %}
+            Free
+        {% else %}
+            ${{ game.price|floatformat:2 }}
+        {% endif %}
+    </p>
+
+    <a href="{% url 'games' %}" class="return-link">← Back to Games</a>
+
+    </body>
+</html>

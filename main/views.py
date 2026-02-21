@@ -1,114 +1,116 @@
 from django.http import HttpRequest
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 
-from main.course import Course, add_course, get_courses_by_level, get_all_courses
+from main.models import Game, Category, Company
 
 
 # Create your views here.
 
-def home(request: HttpRequest):
-    return render(request, 'home.html')
+def get_all_games(request: HttpRequest):
+    games = Game.objects.all()
 
-data = ["ELEMENT1", "ELEMENT2", "ELEMENT3", "ELEMENT4"]
+    context = {'games': games}
+    return render(request, 'games.html', context=context)
 
-def page_elements(request: HttpRequest, index: int, name: str):
-    element = data[index]
+def game_view(request: HttpRequest, game_id: int):
+    game = get_object_or_404(Game, id=game_id)
+    context = {'game': game}
+    return render(request, "game_view.html", context=context)
 
-    context = {
-        "element": element,
-        "name": name,
-    }
-
-    return render(request, "home.html", context=context)
-
-def calc(request: HttpRequest):
-    return render(request, "calc.html")
-
-def calculate(request: HttpRequest, operation: str, a: int, b: int):
-    result = None
-    text = "Calculation complete."
-    operation_sign = ""
-
-    if operation == "add":
-        result = a + b
-        operation_sign = "+"
-    elif operation == "sub":
-        result = a - b
-        operation_sign = "−"
-    elif operation == "mul":
-        result = a * b
-        operation_sign = "×"
-    elif operation == "div":
-        if b == 0:
-            text = "ERROR: division by zero. Please try again."
-        else:
-            result = a / b
-        operation_sign = "÷"
-    elif operation == "mod":
-        result = a % b
-        operation_sign = "%"
-    elif operation == "flo":
-        result = a // b
-        operation_sign = "//"
-    elif operation == "rai":
-        result = a ** b
-        operation_sign = "^"
-    else:
-        text = "ERROR: invalid operation. Please use 'add', 'sub', 'mul' or 'div'"
-
-    context = {
-        "error": text,
-        "operation": operation_sign,
-        "a": a,
-        "b": b,
-        "result": result,
-    }
-
-    return render(request, "calculate.html", context=context)
-
-def website(request: HttpRequest):
-    return render(request, "website.html")
-
-def post_handler(request: HttpRequest):
+def add_game(request):
     if request.method == "POST":
-        data = request.POST
-        name = data["name"]
-        age = data["age"]
+        title = request.POST.get("title")
+        description = request.POST.get("description")
+        price = request.POST.get("price")
+        icon_url = request.POST.get("icon_url")
+        developer_id = request.POST.get("developer")
+        publisher_id = request.POST.get("publisher")
+        category_ids = request.POST.getlist("categories")
 
-        str_data = f"Name: {name}, age: {age}"
-        context = {
-            "str_data":str_data
-        }
-        return render(request, "profile_view.html", context = context)
-    return render(request, "profile.html")
+        developer = Company.objects.get(id=developer_id)
+        publisher = Company.objects.get(id=publisher_id)
 
-def courses(request: HttpRequest):
+        user_name = request.POST.get("user_name")
+
+        game = Game.objects.create(
+            title=title,
+            description=description,
+            price=price,
+            icon_url=icon_url,
+            developer=developer,
+            publisher=publisher,
+            added_by=user_name,
+        )
+
+        game.categories.set(category_ids)
+        game.save()
+
+        return redirect("games")
+
+    categories = Category.objects.all()
+    companies = Company.objects.all()
+    return render(request, "add_game_form.html", {"categories": categories, "companies": companies})
+
+def add_category(request: HttpRequest):
+    if request.method == 'POST':
+        name = request.POST['name']
+        description = request.POST['description']
+        category = Category(name=name, description=description)
+        category.save()
+        return redirect(get_all_games)
+    return render(request, 'add_category_form.html')
+
+def games_page_redirector(request: HttpRequest):
+    return redirect(get_all_games)
+
+def company_view(request, slug):
+    company = get_object_or_404(Company, slug=slug)
+
+    developed_games = company.developed_games.all()
+    published_games = company.published_games.all()
+
+    context = {
+        'company': company,
+        'developed_games': developed_games,
+        'published_games': published_games
+    }
+
+    return render(request, "company_view.html", context)
+
+def category_view(request: HttpRequest, category_id: int):
+    category = get_object_or_404(Category, id=category_id)
+    games = Game.objects.all()
+    category_games = []
+    for game in games:
+        if game.categories.contains(category):
+            category_games.append(game)
+    context = {'category': category, 'games': category_games}
+    return render(request, "category_view.html", context=context)
+
+def edit_game(request: HttpRequest, game_id):
+    game = get_object_or_404(Game, id=game_id)
+    categories = Category.objects.all()
+    developers = Company.objects.all()
+    publishers = Company.objects.all()
+
     if request.method == "POST":
-        request_data = request.POST
-        name = request_data["name"]
-        level = request_data["level"]
-        time = int(request_data["time"])
-        course = Course(name, level, time)
-        add_course(course)
-        context = {
-            "name": name,
-            "level": level,
-            "time": time,
-        }
+        game.title = request.POST.get("title")
+        game.description = request.POST.get("description")
+        game.price = request.POST.get("price")
 
-        return render(request, "course_post.html", context = context)
-    return render(request, "course.html")
+        game.developer_id = request.POST.get("developer")
+        game.publisher_id = request.POST.get("publisher")
 
-def all_courses(request: HttpRequest):
-    course_list = get_all_courses()
-    context = {
-        "courses": course_list
-    }
-    return render(request, "courses_view.html", context = context)
+        selected_categories = request.POST.getlist("categories")
+        game.categories.set(selected_categories)
 
-def course_by_level(request: HttpRequest, level: str):
-    course_list = get_courses_by_level(level)
-    context = {
-        "courses": course_list
-    }
-    return render(request, "courses_view.html", context=context)
+        game.save()
+
+        return redirect("home")
+
+    return render(request, "edit_game.html", {
+        "game": game,
+        "categories": categories,
+        "developers": developers,
+        "publishers": publishers
+    })
